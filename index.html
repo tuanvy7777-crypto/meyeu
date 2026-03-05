@@ -2,38 +2,75 @@
 <html lang="vi">
 <head>
 <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>8/3 Cho Mẹ</title>
-<!-- 🎵 NHẠC NỀN: đổi tên file tại dòng src -->
-<audio id="bg-music" autoplay loop>
+
+<audio id="bg-music" loop>
     <source src="mp3.mp4" type="audio/mpeg">
 </audio>
+
 <style>
+*{box-sizing:border-box}
+
 body{
-    margin:0;
-    background:#0a0a0a;
-    color:white;
-    font-family:Arial;
-    overflow:hidden;
-    display:flex;
-    justify-content:center;
-    align-items:center;
-    height:100vh;
+margin:0;
+background:#0a0a0a;
+color:white;
+font-family:Arial;
+display:flex;
+justify-content:center;
+align-items:center;
+min-height:100vh;
+position:relative;
+overflow:hidden;
+-webkit-tap-highlight-color:transparent;
 }
-canvas{position:absolute;top:0;left:0;z-index:-1;}
+
+canvas{
+position:absolute;
+top:0;
+left:0;
+z-index:-1;
+}
+
 .box{
-    background:rgba(255,255,255,0.1);
-    backdrop-filter:blur(10px);
-    padding:30px;
-    border-radius:20px;
-    text-align:center;
+background:rgba(255,255,255,0.1);
+backdrop-filter:blur(10px);
+padding:25px;
+border-radius:20px;
+text-align:center;
+width:100%;
+max-width:350px;
+margin:20px;
 }
-.numpad{display:grid;grid-template-columns:repeat(3,60px);gap:10px;}
+
+.display{
+height:30px;
+letter-spacing:6px;
+margin-bottom:15px;
+font-size:22px;
+}
+
+.numpad{
+display:grid;
+grid-template-columns:repeat(3,1fr);
+gap:12px;
+}
+
 .numpad button{
-    width:60px;height:60px;border:none;border-radius:50%;
-    background:rgba(255,255,255,0.2);
-    color:white;font-size:20px;cursor:pointer;
+aspect-ratio:1/1;
+border:none;
+border-radius:50%;
+background:rgba(255,255,255,0.2);
+color:white;
+font-size:20px;
 }
-.display{height:30px;letter-spacing:5px;margin-bottom:10px;}
+
+/* mobile tối ưu thêm */
+@media (max-width:480px){
+.box{padding:20px}
+.display{font-size:20px}
+}
 </style>
 </head>
 
@@ -46,89 +83,110 @@ canvas{position:absolute;top:0;left:0;z-index:-1;}
 <div id="display" class="display"></div>
 
 <div class="numpad">
-<button onclick="press(1)">1</button><button onclick="press(2)">2</button><button onclick="press(3)">3</button>
-<button onclick="press(4)">4</button><button onclick="press(5)">5</button><button onclick="press(6)">6</button>
-<button onclick="press(7)">7</button><button onclick="press(8)">8</button><button onclick="press(9)">9</button>
-<button onclick="clearPass()">X</button><button onclick="press(0)">0</button><button onclick="check()">✓</button>
+<button onclick="press(1)">1</button>
+<button onclick="press(2)">2</button>
+<button onclick="press(3)">3</button>
+<button onclick="press(4)">4</button>
+<button onclick="press(5)">5</button>
+<button onclick="press(6)">6</button>
+<button onclick="press(7)">7</button>
+<button onclick="press(8)">8</button>
+<button onclick="press(9)">9</button>
+<button onclick="clearPass()">X</button>
+<button onclick="press(0)">0</button>
+<button onclick="check()">✓</button>
 </div>
 </div>
 
 <script>
 let input="";
 const pass="0803";
+const display=document.getElementById("display");
 
 function press(n){
-    if(input.length<4){
-        input+=n;
-        display.innerText="*".repeat(input.length);
-    }
+if(input.length<4){
+input+=n;
+display.innerText="*".repeat(input.length);
+}
 }
 
 function clearPass(){
-    input="";
-    display.innerText="";
+input="";
+display.innerText="";
 }
 
 function check(){
-    if(input===pass){
-        heartExplosion();
-        setTimeout(()=> location.href="main.html",1500);
-    } else {
-        alert("Sai mật khẩu");
-        clearPass();
-    }
+if(input===pass){
+heartExplosion();
+setTimeout(()=>location.href="main.html",1500);
+}else{
+alert("Sai mật khẩu");
+clearPass();
+}
 }
 
-// ❤️ Tim bay
+/* ❤️ Tim bay tối ưu mobile */
 function heartExplosion(){
-    for(let i=0;i<40;i++){
-        let heart=document.createElement("div");
-        heart.innerHTML="💖";
-        heart.style.position="fixed";
-        heart.style.left="50%";
-        heart.style.top="50%";
-        heart.style.fontSize="20px";
-        heart.style.transition="1.5s";
-        document.body.appendChild(heart);
+for(let i=0;i<40;i++){
+let heart=document.createElement("div");
+heart.innerHTML="💖";
+heart.style.position="fixed";
+heart.style.left="50%";
+heart.style.top="50%";
+heart.style.transform="translate(-50%,-50%)";
+heart.style.fontSize="20px";
+heart.style.transition="1.5s";
+heart.style.pointerEvents="none";
+document.body.appendChild(heart);
 
-        let x=(Math.random()-0.5)*600;
-        let y=(Math.random()-0.5)*600;
+let x=(Math.random()-0.5)*window.innerWidth;
+let y=(Math.random()-0.5)*window.innerHeight;
 
-        setTimeout(()=>{
-            heart.style.transform=`translate(${x}px,${y}px) scale(2)`;
-            heart.style.opacity=0;
-        },10);
+setTimeout(()=>{
+heart.style.transform=`translate(${x}px,${y}px) scale(2)`;
+heart.style.opacity=0;
+},10);
 
-        setTimeout(()=>heart.remove(),1500);
-    }
+setTimeout(()=>heart.remove(),1500);
+}
 }
 
-// nền hạt
+/* nền hạt responsive */
 const canvas=document.getElementById("bg");
 const ctx=canvas.getContext("2d");
-canvas.width=innerWidth; canvas.height=innerHeight;
+
+function resizeCanvas(){
+canvas.width=window.innerWidth;
+canvas.height=window.innerHeight;
+}
+resizeCanvas();
+window.addEventListener("resize",resizeCanvas);
 
 let p=[];
-for(let i=0;i<80;i++)
-    p.push({x:Math.random()*canvas.width,y:Math.random()*canvas.height});
+for(let i=0;i<80;i++){
+p.push({
+x:Math.random()*canvas.width,
+y:Math.random()*canvas.height
+});
+}
 
 function draw(){
-    ctx.clearRect(0,0,canvas.width,canvas.height);
-    ctx.fillStyle="pink";
-    p.forEach(e=>{
-        ctx.beginPath();
-        ctx.arc(e.x,e.y,2,0,Math.PI*2);
-        ctx.fill();
-    });
-    requestAnimationFrame(draw);
+ctx.clearRect(0,0,canvas.width,canvas.height);
+ctx.fillStyle="pink";
+p.forEach(e=>{
+ctx.beginPath();
+ctx.arc(e.x,e.y,2,0,Math.PI*2);
+ctx.fill();
+});
+requestAnimationFrame(draw);
 }
 draw();
-// 🔊 Nếu trình duyệt chặn autoplay → phát khi người dùng click
-    document.addEventListener("click", () => {
-        const music = document.getElementById("bg-music");
-        music.play();
-    }, { once: true });
+
+/* autoplay fix mobile */
+document.addEventListener("click",()=>{
+document.getElementById("bg-music").play();
+},{once:true});
 </script>
-</script>
+
 </body>
 </html>
