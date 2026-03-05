@@ -1,21 +1,26 @@
 <!DOCTYPE html>
-<html>
+<html lang="vi">
 <head>
 <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>3D Earth Orbit</title>
-<!-- 🎵 NHẠC NỀN: đổi tên file tại dòng src -->
-<audio id="bg-music" autoplay loop>
-    <source src="mp1.mp4" type="audio/mpeg">
+
+<audio id="bg-music" loop>
+<source src="mp1.mp4" type="audio/mpeg">
 </audio>
+
 <style>
+*{box-sizing:border-box}
+
 body{
-  margin:0;
-  overflow:hidden;
-  background:black;
+margin:0;
+overflow:hidden;
+background:black;
+touch-action:none;
+-webkit-tap-highlight-color:transparent;
 }
-canvas{
-  display:block;
-}
+
+canvas{display:block}
 </style>
 </head>
 <body>
@@ -23,18 +28,21 @@ canvas{
 <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
 
 <script>
+const isMobile = window.innerWidth < 768;
+
 /* ===== SCENE ===== */
 const scene = new THREE.Scene();
 
 const camera = new THREE.PerspectiveCamera(
-  75,
-  window.innerWidth/window.innerHeight,
-  0.1,
-  3000
+75,
+window.innerWidth/window.innerHeight,
+0.1,
+3000
 );
-camera.position.z = 1000;
+camera.position.z = isMobile ? 1100 : 1000;
 
 const renderer = new THREE.WebGLRenderer({antialias:true});
+renderer.setPixelRatio(Math.min(window.devicePixelRatio,1.5));
 renderer.setSize(window.innerWidth,window.innerHeight);
 document.body.appendChild(renderer.domElement);
 
@@ -45,86 +53,108 @@ const light = new THREE.PointLight(0xffffff,1.2);
 light.position.set(500,300,500);
 scene.add(light);
 
-/* ===== EARTH 3D ===== */
+/* ===== EARTH ===== */
 const loader = new THREE.TextureLoader();
 
 const earthTexture = loader.load(
-  "https://threejs.org/examples/textures/land_ocean_ice_cloud_2048.jpg"
+"https://threejs.org/examples/textures/land_ocean_ice_cloud_2048.jpg"
 );
 
 const earth = new THREE.Mesh(
-  new THREE.SphereGeometry(180,64,64),
-  new THREE.MeshStandardMaterial({map:earthTexture})
+new THREE.SphereGeometry(
+isMobile ? 160 : 180,
+isMobile ? 48 : 64,
+isMobile ? 48 : 64
+),
+new THREE.MeshStandardMaterial({map:earthTexture})
 );
 scene.add(earth);
 
-/* ===== THÔNG SỐ VÒNG ẢNH ===== */
-const radius = 600;          // bán kính quỹ đạo
-const imageSize = 120;       // kích thước ảnh
+/* ===== ORBIT SETTINGS ===== */
+const radius = isMobile ? 500 : 600;
+const imageSize = isMobile ? 90 : 120;
 
-// Tính tổng ảnh để nối liền nhau
 const circumference = 2 * Math.PI * radius;
-const total = Math.floor(circumference / imageSize);  
+const total = Math.floor(circumference / imageSize);
 
-/* ===== DANH SÁCH ẢNH (10 ẢNH GỐC) ===== */
 const baseImgs = [
-  "me1.jpg",
-  "me2.jpg",
-  "me3.jpg",
-  "me4.jpg",
-  "me5.jpg",
-  "me6.jpg",
-  "me7.jpg",
-  "me8.jpg",
-  "me9.jpg",
-  "me10.jpg"
+"me1.jpg","me2.jpg","me3.jpg","me4.jpg","me5.jpg",
+"me6.jpg","me7.jpg","me8.jpg","me9.jpg","me10.jpg"
 ];
 
-/* ===== TẠO VÒNG ẢNH LIỀN NHAU ===== */
 for(let i=0;i<total;i++){
 
-  const angle = (i/total) * Math.PI * 2;
+const angle = (i/total) * Math.PI * 2;
+const texture = loader.load(baseImgs[i % baseImgs.length]);
 
-  const texture = loader.load(baseImgs[i % baseImgs.length]);
+const plane = new THREE.Mesh(
+new THREE.PlaneGeometry(imageSize,imageSize),
+new THREE.MeshBasicMaterial({
+map:texture,
+side:THREE.DoubleSide
+})
+);
 
-  const plane = new THREE.Mesh(
-    new THREE.PlaneGeometry(imageSize,imageSize),
-    new THREE.MeshBasicMaterial({
-      map:texture,
-      side:THREE.DoubleSide
-    })
-  );
+plane.position.x = Math.cos(angle) * radius;
+plane.position.z = Math.sin(angle) * radius;
+plane.lookAt(0,0,0);
 
-  plane.position.x = Math.cos(angle) * radius;
-  plane.position.z = Math.sin(angle) * radius;
-
-  plane.lookAt(0,0,0);
-
-  scene.add(plane);
+scene.add(plane);
 }
+
+/* ===== TOUCH ROTATE ===== */
+let dragging=false;
+let lastX;
+
+window.addEventListener("mousedown",e=>{
+dragging=true;
+lastX=e.clientX;
+});
+window.addEventListener("mouseup",()=>dragging=false);
+window.addEventListener("mousemove",e=>{
+if(dragging){
+scene.rotation.y += (e.clientX-lastX)*0.005;
+lastX=e.clientX;
+}
+});
+
+window.addEventListener("touchstart",e=>{
+dragging=true;
+lastX=e.touches[0].clientX;
+},{passive:false});
+
+window.addEventListener("touchmove",e=>{
+if(dragging){
+let x=e.touches[0].clientX;
+scene.rotation.y += (x-lastX)*0.005;
+lastX=x;
+}
+},{passive:false});
+
+window.addEventListener("touchend",()=>dragging=false);
 
 /* ===== ANIMATION ===== */
 function animate(){
-  requestAnimationFrame(animate);
+requestAnimationFrame(animate);
 
-  earth.rotation.y += 0.002;
-  scene.rotation.y += 0.0015;
+earth.rotation.y += 0.002;
+scene.rotation.y += 0.001;
 
-  renderer.render(scene,camera);
+renderer.render(scene,camera);
 }
 animate();
 
 /* ===== RESPONSIVE ===== */
 window.addEventListener("resize",()=>{
-  camera.aspect = window.innerWidth/window.innerHeight;
-  camera.updateProjectionMatrix();
-  renderer.setSize(window.innerWidth,window.innerHeight);
+camera.aspect = window.innerWidth/window.innerHeight;
+camera.updateProjectionMatrix();
+renderer.setSize(window.innerWidth,window.innerHeight);
 });
-// 🔊 Nếu trình duyệt chặn autoplay → phát khi người dùng click
-    document.addEventListener("click", () => {
-        const music = document.getElementById("bg-music");
-        music.play();
-    }, { once: true });
+
+/* autoplay fix */
+document.addEventListener("click",()=>{
+document.getElementById("bg-music").play();
+},{once:true});
 </script>
 
 </body>
