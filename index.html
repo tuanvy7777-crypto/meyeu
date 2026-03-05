@@ -1,0 +1,134 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+<meta charset="UTF-8">
+<title>8/3 Cho Mẹ</title>
+<!-- 🎵 NHẠC NỀN: đổi tên file tại dòng src -->
+<audio id="bg-music" autoplay loop>
+    <source src="mp3.mp4" type="audio/mpeg">
+</audio>
+<style>
+body{
+    margin:0;
+    background:#0a0a0a;
+    color:white;
+    font-family:Arial;
+    overflow:hidden;
+    display:flex;
+    justify-content:center;
+    align-items:center;
+    height:100vh;
+}
+canvas{position:absolute;top:0;left:0;z-index:-1;}
+.box{
+    background:rgba(255,255,255,0.1);
+    backdrop-filter:blur(10px);
+    padding:30px;
+    border-radius:20px;
+    text-align:center;
+}
+.numpad{display:grid;grid-template-columns:repeat(3,60px);gap:10px;}
+.numpad button{
+    width:60px;height:60px;border:none;border-radius:50%;
+    background:rgba(255,255,255,0.2);
+    color:white;font-size:20px;cursor:pointer;
+}
+.display{height:30px;letter-spacing:5px;margin-bottom:10px;}
+</style>
+</head>
+
+<body>
+
+<canvas id="bg"></canvas>
+
+<div class="box">
+<h3>Nhập mật khẩu</h3>
+<div id="display" class="display"></div>
+
+<div class="numpad">
+<button onclick="press(1)">1</button><button onclick="press(2)">2</button><button onclick="press(3)">3</button>
+<button onclick="press(4)">4</button><button onclick="press(5)">5</button><button onclick="press(6)">6</button>
+<button onclick="press(7)">7</button><button onclick="press(8)">8</button><button onclick="press(9)">9</button>
+<button onclick="clearPass()">X</button><button onclick="press(0)">0</button><button onclick="check()">✓</button>
+</div>
+</div>
+
+<script>
+let input="";
+const pass="0803";
+
+function press(n){
+    if(input.length<4){
+        input+=n;
+        display.innerText="*".repeat(input.length);
+    }
+}
+
+function clearPass(){
+    input="";
+    display.innerText="";
+}
+
+function check(){
+    if(input===pass){
+        heartExplosion();
+        setTimeout(()=> location.href="main.html",1500);
+    } else {
+        alert("Sai mật khẩu");
+        clearPass();
+    }
+}
+
+// ❤️ Tim bay
+function heartExplosion(){
+    for(let i=0;i<40;i++){
+        let heart=document.createElement("div");
+        heart.innerHTML="💖";
+        heart.style.position="fixed";
+        heart.style.left="50%";
+        heart.style.top="50%";
+        heart.style.fontSize="20px";
+        heart.style.transition="1.5s";
+        document.body.appendChild(heart);
+
+        let x=(Math.random()-0.5)*600;
+        let y=(Math.random()-0.5)*600;
+
+        setTimeout(()=>{
+            heart.style.transform=`translate(${x}px,${y}px) scale(2)`;
+            heart.style.opacity=0;
+        },10);
+
+        setTimeout(()=>heart.remove(),1500);
+    }
+}
+
+// nền hạt
+const canvas=document.getElementById("bg");
+const ctx=canvas.getContext("2d");
+canvas.width=innerWidth; canvas.height=innerHeight;
+
+let p=[];
+for(let i=0;i<80;i++)
+    p.push({x:Math.random()*canvas.width,y:Math.random()*canvas.height});
+
+function draw(){
+    ctx.clearRect(0,0,canvas.width,canvas.height);
+    ctx.fillStyle="pink";
+    p.forEach(e=>{
+        ctx.beginPath();
+        ctx.arc(e.x,e.y,2,0,Math.PI*2);
+        ctx.fill();
+    });
+    requestAnimationFrame(draw);
+}
+draw();
+// 🔊 Nếu trình duyệt chặn autoplay → phát khi người dùng click
+    document.addEventListener("click", () => {
+        const music = document.getElementById("bg-music");
+        music.play();
+    }, { once: true });
+</script>
+</script>
+</body>
+</html>
