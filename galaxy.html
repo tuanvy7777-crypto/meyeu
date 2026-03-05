@@ -6,18 +6,18 @@
 <title>3D Earth Orbit</title>
 
 <audio id="bg-music" loop>
-<source src="mp1.mp4" type="audio/mpeg">
+    <source src="mp1.mp4" type="audio/mpeg">
 </audio>
 
 <style>
 *{box-sizing:border-box}
 
 body{
-margin:0;
-overflow:hidden;
-background:black;
-touch-action:none;
--webkit-tap-highlight-color:transparent;
+    margin:0;
+    overflow:hidden;
+    background:black;
+    touch-action:none;
+    -webkit-tap-highlight-color:transparent;
 }
 
 canvas{display:block}
@@ -34,12 +34,12 @@ const isMobile = window.innerWidth < 768;
 const scene = new THREE.Scene();
 
 const camera = new THREE.PerspectiveCamera(
-75,
-window.innerWidth/window.innerHeight,
-0.1,
-3000
+    75,
+    window.innerWidth/window.innerHeight,
+    0.1,
+    5000
 );
-camera.position.z = isMobile ? 1100 : 1000;
+camera.position.z = isMobile ? 1300 : 1200;
 
 const renderer = new THREE.WebGLRenderer({antialias:true});
 renderer.setPixelRatio(Math.min(window.devicePixelRatio,1.5));
@@ -57,22 +57,24 @@ scene.add(light);
 const loader = new THREE.TextureLoader();
 
 const earthTexture = loader.load(
-"https://threejs.org/examples/textures/land_ocean_ice_cloud_2048.jpg"
+    "https://threejs.org/examples/textures/land_ocean_ice_cloud_2048.jpg"
 );
 
 const earth = new THREE.Mesh(
-new THREE.SphereGeometry(
-isMobile ? 160 : 180,
-isMobile ? 48 : 64,
-isMobile ? 48 : 64
-),
-new THREE.MeshStandardMaterial({map:earthTexture})
+    new THREE.SphereGeometry(
+        isMobile ? 160 : 180,
+        isMobile ? 48 : 64,
+        isMobile ? 48 : 64
+    ),
+    new THREE.MeshStandardMaterial({map:earthTexture})
 );
 scene.add(earth);
 
 /* ===== ORBIT SETTINGS ===== */
 const radius = isMobile ? 500 : 600;
-const imageSize = isMobile ? 90 : 120;
+
+/* PHÓNG TO ẢNH GẤP ĐÔI */
+const imageSize = (isMobile ? 90 : 120) * 2;
 
 const circumference = 2 * Math.PI * radius;
 const total = Math.floor(circumference / imageSize);
@@ -84,77 +86,116 @@ const baseImgs = [
 
 for(let i=0;i<total;i++){
 
-const angle = (i/total) * Math.PI * 2;
-const texture = loader.load(baseImgs[i % baseImgs.length]);
+    const angle = (i/total) * Math.PI * 2;
+    const texture = loader.load(baseImgs[i % baseImgs.length]);
 
-const plane = new THREE.Mesh(
-new THREE.PlaneGeometry(imageSize,imageSize),
-new THREE.MeshBasicMaterial({
-map:texture,
-side:THREE.DoubleSide
-})
-);
+    const plane = new THREE.Mesh(
+        new THREE.PlaneGeometry(imageSize,imageSize),
+        new THREE.MeshBasicMaterial({
+            map:texture,
+            side:THREE.DoubleSide
+        })
+    );
 
-plane.position.x = Math.cos(angle) * radius;
-plane.position.z = Math.sin(angle) * radius;
-plane.lookAt(0,0,0);
+    plane.position.x = Math.cos(angle) * radius;
+    plane.position.z = Math.sin(angle) * radius;
+    plane.lookAt(0,0,0);
 
-scene.add(plane);
+    scene.add(plane);
 }
 
-/* ===== TOUCH ROTATE ===== */
+/* ===== XOAY BẰNG CHUỘT / TOUCH ===== */
 let dragging=false;
 let lastX;
 
 window.addEventListener("mousedown",e=>{
-dragging=true;
-lastX=e.clientX;
+    dragging=true;
+    lastX=e.clientX;
 });
+
 window.addEventListener("mouseup",()=>dragging=false);
+
 window.addEventListener("mousemove",e=>{
-if(dragging){
-scene.rotation.y += (e.clientX-lastX)*0.005;
-lastX=e.clientX;
-}
+    if(dragging){
+        scene.rotation.y += (e.clientX-lastX)*0.005;
+        lastX=e.clientX;
+    }
 });
 
 window.addEventListener("touchstart",e=>{
-dragging=true;
-lastX=e.touches[0].clientX;
+    dragging=true;
+    lastX=e.touches[0].clientX;
 },{passive:false});
 
 window.addEventListener("touchmove",e=>{
-if(dragging){
-let x=e.touches[0].clientX;
-scene.rotation.y += (x-lastX)*0.005;
-lastX=x;
-}
+    if(e.touches.length===1 && dragging){
+        let x=e.touches[0].clientX;
+        scene.rotation.y += (x-lastX)*0.005;
+        lastX=x;
+    }
 },{passive:false});
 
 window.addEventListener("touchend",()=>dragging=false);
 
+/* ===== ZOOM CAMERA ===== */
+const minZoom = 600;
+const maxZoom = 2500;
+
+/* Mouse wheel */
+window.addEventListener("wheel",e=>{
+    camera.position.z += e.deltaY * 0.5;
+    camera.position.z = Math.max(minZoom, Math.min(maxZoom, camera.position.z));
+});
+
+/* Pinch zoom mobile */
+let initialDistance = null;
+
+function getDistance(touches){
+    return Math.hypot(
+        touches[0].clientX - touches[1].clientX,
+        touches[0].clientY - touches[1].clientY
+    );
+}
+
+window.addEventListener("touchmove",e=>{
+    if(e.touches.length===2){
+        let distance = getDistance(e.touches);
+        if(initialDistance){
+            let delta = initialDistance - distance;
+            camera.position.z += delta * 2;
+            camera.position.z = Math.max(minZoom, Math.min(maxZoom, camera.position.z));
+        }
+        initialDistance = distance;
+    }
+},{passive:false});
+
+window.addEventListener("touchend",()=>{
+    initialDistance = null;
+});
+
 /* ===== ANIMATION ===== */
 function animate(){
-requestAnimationFrame(animate);
+    requestAnimationFrame(animate);
 
-earth.rotation.y += 0.002;
-scene.rotation.y += 0.001;
+    earth.rotation.y += 0.002;
+    scene.rotation.y += 0.001;
 
-renderer.render(scene,camera);
+    renderer.render(scene,camera);
 }
 animate();
 
 /* ===== RESPONSIVE ===== */
 window.addEventListener("resize",()=>{
-camera.aspect = window.innerWidth/window.innerHeight;
-camera.updateProjectionMatrix();
-renderer.setSize(window.innerWidth,window.innerHeight);
+    camera.aspect = window.innerWidth/window.innerHeight;
+    camera.updateProjectionMatrix();
+    renderer.setSize(window.innerWidth,window.innerHeight);
 });
 
-/* autoplay fix */
+/* Autoplay fix */
 document.addEventListener("click",()=>{
-document.getElementById("bg-music").play();
+    document.getElementById("bg-music").play();
 },{once:true});
+
 </script>
 
 </body>
