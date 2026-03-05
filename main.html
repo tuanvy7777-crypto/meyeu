@@ -5,110 +5,149 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Chúc Mừng 8/3 Mẹ</title>
 
-<!-- 🎵 NHẠC NỀN -->
 <audio id="bg-music" loop>
-    <source src="mp3.mp4" type="audio/mpeg">
+<source src="mp3.mp4" type="audio/mpeg">
 </audio>
 
 <style>
+*{box-sizing:border-box}
+
 body{
-    font-family: Arial;
-    background:#fff0f5;
-    text-align:center;
-    margin:0;
-    padding:20px;
+font-family:Arial;
+background:#fff0f5;
+text-align:center;
+margin:0;
+padding:20px;
+-webkit-tap-highlight-color:transparent;
+overflow-x:hidden;
 }
 
 /* Container chính */
 .container{
-    display:flex;
-    justify-content:center;
-    align-items:flex-start;
-    gap:40px;
-    flex-wrap:wrap; /* quan trọng cho mobile */
-    max-width:1200px;
-    margin:0 auto;
+display:flex;
+justify-content:center;
+align-items:flex-start;
+gap:40px;
+flex-wrap:wrap;
+max-width:1200px;
+margin:0 auto;
 }
 
 /* Menu quà */
 .menu{
-    display:flex;
-    flex-direction:column;
-    gap:20px;
+display:flex;
+flex-direction:column;
+gap:20px;
 }
 
 /* Card quà */
 .card{
-    width:160px;
-    height:210px;
-    background:#fff;
-    border-radius:15px;
-    box-shadow:0 6px 15px rgba(0,0,0,0.15);
-    cursor:pointer;
-    transition:0.4s;
-    overflow:hidden;
-}
-
-.card:hover{
-    transform:scale(1.06);
+width:170px;
+background:#fff;
+border-radius:18px;
+box-shadow:0 6px 15px rgba(0,0,0,0.15);
+cursor:pointer;
+transition:0.35s;
+overflow:hidden;
 }
 
 .card img{
-    width:100%;
-    height:130px;
-    object-fit:cover;
+width:100%;
+height:130px;
+object-fit:cover;
 }
 
 .card p{
-    margin:8px 0 0 0;
-    font-size:16px;
-    font-weight:bold;
-    color:#ff1493;
+margin:10px 0 0 0;
+font-size:15px;
+font-weight:bold;
+color:#ff1493;
 }
 
 .gift-number{
-    font-size:14px;
-    color:#555;
+font-size:13px;
+color:#555;
+padding-bottom:10px;
+}
+
+/* Hover chỉ khi có chuột */
+@media (hover:hover){
+.card:hover{
+transform:scale(1.06);
+}
 }
 
 /* Calendar */
 .calendar{
-    margin-top:20px;
+margin-top:20px;
+width:100%;
+max-width:420px;
 }
 
 .calendar table{
-    border-collapse:collapse;
+border-collapse:collapse;
+width:100%;
+background:white;
+border-radius:15px;
+overflow:hidden;
+box-shadow:0 6px 15px rgba(0,0,0,0.1);
 }
 
 td{
-    padding:8px;
-    border:1px solid #ddd;
-    font-size:14px;
+padding:10px 6px;
+border:1px solid #eee;
+font-size:14px;
 }
 
 .highlight{
-    background:#ff69b4;
-    color:white;
-    border-radius:50%;
+background:#ff69b4;
+color:white;
+border-radius:50%;
+font-weight:bold;
 }
 
-/* Responsive cho điện thoại */
+/* Responsive */
 @media(max-width:768px){
-    .container{
-        flex-direction:column;
-        align-items:center;
-    }
 
-    .menu{
-        flex-direction:row;
-        flex-wrap:wrap;
-        justify-content:center;
-    }
+.container{
+flex-direction:column;
+align-items:center;
+gap:30px;
+}
 
-    .card{
-        width:140px;
-        height:190px;
-    }
+.menu{
+flex-direction:row;
+flex-wrap:wrap;
+justify-content:center;
+gap:15px;
+}
+
+.card{
+width:45%;
+max-width:200px;
+}
+
+}
+
+@media(max-width:480px){
+
+h1{
+font-size:18px;
+}
+
+.card{
+width:90%;
+}
+
+.calendar{
+max-width:100%;
+}
+
+td{
+font-size:13px;
+padding:8px 4px;
+}
+
 }
 </style>
 </head>
@@ -121,22 +160,22 @@ td{
 
 <div class="menu">
 
-<div class="card" onclick="alert('8/3 này Con chúc mẹ luôn mạnh khỏe và hạnh phúc.Hiện tại con chỉ có thể làm những thứ này để chúc mẹ thôi.Sau này con làm ra tiền rồi sẽ bù dắp lại cho mẹ nè. ❤️')">
-    <img src="anh1.jpg">
-    <p>Món quà 1</p>
-    <div class="gift-number">💌 Lời chúc</div>
+<div class="card" onclick="alert('8/3 này Con chúc mẹ luôn mạnh khỏe và hạnh phúc. Hiện tại con chỉ có thể làm những thứ này để chúc mẹ thôi. Sau này con làm ra tiền rồi sẽ bù đắp lại cho mẹ nè. ❤️')">
+<img src="anh1.jpg">
+<p>Món quà 1</p>
+<div class="gift-number">💌 Lời chúc</div>
 </div>
 
 <div class="card" onclick="location.href='heart.html'">
-    <img src="anh2.jpg">
-    <p>Món quà 2</p>
-    <div class="gift-number">💖 Trái tim</div>
+<img src="anh2.jpg">
+<p>Món quà 2</p>
+<div class="gift-number">💖 Trái tim</div>
 </div>
 
 <div class="card" onclick="location.href='galaxy.html'">
-    <img src="anh3.jpg">
-    <p>Món quà 3</p>
-    <div class="gift-number">🌌 Kỷ niệm</div>
+<img src="anh3.jpg">
+<p>Món quà 3</p>
+<div class="gift-number">🌌 Kỷ niệm</div>
 </div>
 
 </div>
@@ -157,31 +196,31 @@ td{
 
 <script>
 
-// 🌸 Hoa rơi (không làm tràn trang)
+/* 🌸 Hoa rơi tối ưu mobile */
 setInterval(()=>{
-    let flower=document.createElement("div");
-    flower.innerHTML="🌸";
-    flower.style.position="fixed";
-    flower.style.top="-20px";
-    flower.style.left=Math.random()*100+"vw";
-    flower.style.fontSize=16+Math.random()*14+"px";
-    flower.style.transition="6s linear";
-    flower.style.pointerEvents="none";
-    document.body.appendChild(flower);
+let flower=document.createElement("div");
+flower.innerHTML="🌸";
+flower.style.position="fixed";
+flower.style.top="-30px";
+flower.style.left=Math.random()*100+"vw";
+flower.style.fontSize=16+Math.random()*18+"px";
+flower.style.transition="7s linear";
+flower.style.pointerEvents="none";
+flower.style.zIndex="999";
+document.body.appendChild(flower);
 
-    setTimeout(()=>{
-        flower.style.transform="translateY(110vh)";
-        flower.style.opacity=0;
-    },50);
+setTimeout(()=>{
+flower.style.transform="translateY(110vh)";
+flower.style.opacity=0;
+},50);
 
-    setTimeout(()=>flower.remove(),6000);
-},400);
+setTimeout(()=>flower.remove(),7000);
+},500);
 
-// 🔊 Phát nhạc khi click
-document.addEventListener("click", () => {
-    const music = document.getElementById("bg-music");
-    music.play();
-}, { once: true });
+/* 🔊 Phát nhạc khi người dùng chạm */
+document.addEventListener("click",()=>{
+document.getElementById("bg-music").play();
+},{once:true});
 
 </script>
 
