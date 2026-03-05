@@ -1,0 +1,131 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>3D Earth Orbit</title>
+<!-- 🎵 NHẠC NỀN: đổi tên file tại dòng src -->
+<audio id="bg-music" autoplay loop>
+    <source src="mp1.mp4" type="audio/mpeg">
+</audio>
+<style>
+body{
+  margin:0;
+  overflow:hidden;
+  background:black;
+}
+canvas{
+  display:block;
+}
+</style>
+</head>
+<body>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+
+<script>
+/* ===== SCENE ===== */
+const scene = new THREE.Scene();
+
+const camera = new THREE.PerspectiveCamera(
+  75,
+  window.innerWidth/window.innerHeight,
+  0.1,
+  3000
+);
+camera.position.z = 1000;
+
+const renderer = new THREE.WebGLRenderer({antialias:true});
+renderer.setSize(window.innerWidth,window.innerHeight);
+document.body.appendChild(renderer.domElement);
+
+/* ===== LIGHT ===== */
+scene.add(new THREE.AmbientLight(0xffffff,0.6));
+
+const light = new THREE.PointLight(0xffffff,1.2);
+light.position.set(500,300,500);
+scene.add(light);
+
+/* ===== EARTH 3D ===== */
+const loader = new THREE.TextureLoader();
+
+const earthTexture = loader.load(
+  "https://threejs.org/examples/textures/land_ocean_ice_cloud_2048.jpg"
+);
+
+const earth = new THREE.Mesh(
+  new THREE.SphereGeometry(180,64,64),
+  new THREE.MeshStandardMaterial({map:earthTexture})
+);
+scene.add(earth);
+
+/* ===== THÔNG SỐ VÒNG ẢNH ===== */
+const radius = 600;          // bán kính quỹ đạo
+const imageSize = 120;       // kích thước ảnh
+
+// Tính tổng ảnh để nối liền nhau
+const circumference = 2 * Math.PI * radius;
+const total = Math.floor(circumference / imageSize);  
+
+/* ===== DANH SÁCH ẢNH (10 ẢNH GỐC) ===== */
+const baseImgs = [
+  "me1.jpg",
+  "me2.jpg",
+  "me3.jpg",
+  "me4.jpg",
+  "me5.jpg",
+  "me6.jpg",
+  "me7.jpg",
+  "me8.jpg",
+  "me9.jpg",
+  "me10.jpg"
+];
+
+/* ===== TẠO VÒNG ẢNH LIỀN NHAU ===== */
+for(let i=0;i<total;i++){
+
+  const angle = (i/total) * Math.PI * 2;
+
+  const texture = loader.load(baseImgs[i % baseImgs.length]);
+
+  const plane = new THREE.Mesh(
+    new THREE.PlaneGeometry(imageSize,imageSize),
+    new THREE.MeshBasicMaterial({
+      map:texture,
+      side:THREE.DoubleSide
+    })
+  );
+
+  plane.position.x = Math.cos(angle) * radius;
+  plane.position.z = Math.sin(angle) * radius;
+
+  plane.lookAt(0,0,0);
+
+  scene.add(plane);
+}
+
+/* ===== ANIMATION ===== */
+function animate(){
+  requestAnimationFrame(animate);
+
+  earth.rotation.y += 0.002;
+  scene.rotation.y += 0.0015;
+
+  renderer.render(scene,camera);
+}
+animate();
+
+/* ===== RESPONSIVE ===== */
+window.addEventListener("resize",()=>{
+  camera.aspect = window.innerWidth/window.innerHeight;
+  camera.updateProjectionMatrix();
+  renderer.setSize(window.innerWidth,window.innerHeight);
+});
+// 🔊 Nếu trình duyệt chặn autoplay → phát khi người dùng click
+    document.addEventListener("click", () => {
+        const music = document.getElementById("bg-music");
+        music.play();
+    }, { once: true });
+</script>
+
+</body>
+</html>
