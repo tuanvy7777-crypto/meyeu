@@ -4,14 +4,20 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>8/3 Cho Mẹ</title>
 
+<!-- Nhạc nền -->
 <audio id="bg-music" loop>
 <source src="mp3.mp4" type="audio/mpeg">
 </audio>
 
 <style>
+*{
+box-sizing:border-box
+}
+
 body{
 margin:0;
-font-family:Arial
+font-family:Arial;
+-webkit-tap-highlight-color:transparent;
 }
 
 /* ===== LOGIN ===== */
@@ -27,25 +33,34 @@ display:flex;
 justify-content:center;
 align-items:center;
 z-index:10;
+padding:20px;
 }
 
 .box{
 background:rgba(255,255,255,0.1);
-padding:30px;
+padding:25px;
 border-radius:20px;
 text-align:center;
+width:100%;
+max-width:350px;
+}
+
+#display{
+height:30px;
+margin-bottom:15px;
+font-size:22px;
+letter-spacing:5px;
 }
 
 .numpad{
 display:grid;
-grid-template-columns:repeat(3,60px);
-gap:10px;
+grid-template-columns:repeat(3,1fr);
+gap:12px;
 margin-top:10px;
 }
 
 .numpad button{
-width:60px;
-height:60px;
+aspect-ratio:1/1;
 border:none;
 border-radius:50%;
 background:rgba(255,255,255,0.2);
@@ -60,58 +75,80 @@ display:none;
 background:#fff0f5;
 min-height:100vh;
 text-align:center;
-padding:30px;
+padding:20px;
+}
+
+h1{
+font-size:22px;
+margin-bottom:10px;
 }
 
 .container{
 display:flex;
 justify-content:center;
-gap:40px;
+gap:20px;
 flex-wrap:wrap;
 margin-top:20px;
 }
 
 .card{
-width:180px;
-height:230px;
+width:160px;
 background:white;
 border-radius:15px;
-box-shadow:0 6px 15px rgba(0,0,0,0.2);
+box-shadow:0 6px 15px rgba(0,0,0,0.15);
 cursor:pointer;
 transition:0.3s;
-}
-
-.card:hover{
-transform:scale(1.05)
+overflow:hidden;
 }
 
 .card img{
 width:100%;
-height:140px;
+height:130px;
 object-fit:cover
 }
 
 .card p{
 font-weight:bold;
-color:#ff1493
+color:#ff1493;
+padding:10px;
+margin:0;
+font-size:14px;
 }
 
-.wish{
-max-width:700px;
-margin:30px auto;
-font-size:20px;
-color:#333;
-line-height:1.6;
+/* Hover chỉ khi có chuột */
+@media (hover:hover){
+.card:hover{
+transform:scale(1.05)
+}
+}
+
+/* ===== MOBILE ===== */
+@media (max-width:480px){
+
+h1{
+font-size:18px;
+}
+
+.card{
+width:100%;
+max-width:260px;
+}
+
+.container{
+gap:15px;
+}
+
 }
 </style>
 </head>
+
 <body>
 
 <!-- LOGIN -->
 <div id="login">
 <div class="box">
 <h3>Nhập mật khẩu</h3>
-<div id="display" style="height:30px;margin-bottom:10px;"></div>
+<div id="display"></div>
 
 <div class="numpad">
 <button onclick="press(1)">1</button>
@@ -159,7 +196,7 @@ let input=""
 const pass="0803"
 const display=document.getElementById("display")
 
-/* ===== KIỂM TRA TRẠNG THÁI LOGIN KHI LOAD ===== */
+/* Kiểm tra trạng thái login */
 window.addEventListener("DOMContentLoaded",function(){
 if(sessionStorage.getItem("loggedIn")==="true"){
 document.getElementById("login").style.display="none"
@@ -190,7 +227,7 @@ clearPass()
 }
 }
 
-/* autoplay fix */
+/* Fix autoplay mobile */
 document.addEventListener("click",function(){
 document.getElementById("bg-music").play()
 },{once:true})
